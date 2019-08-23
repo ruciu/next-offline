@@ -2,7 +2,7 @@ const { GenerateSW, InjectManifest } = require('workbox-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { readFile, writeFile } = require('fs-extra');
-const { join } = require('path');
+const { resolve } = require('path');
 
 const InlineNextPrecacheManifestPlugin = require('./plugin');
 const exportSw = require('./export');
@@ -21,7 +21,7 @@ module.exports = (nextConfig = {}) => ({
       assetPrefix,
       generateSw = true,
       dontAutoRegisterSw = false,
-      devSwSrc = join(__dirname, 'service-worker.js'),
+      devSwSrc = resolve(__dirname, 'service-worker.js'),
       registerSwPrefix = '',
       scope = '/',
       generateInDevMode = false,
@@ -70,7 +70,7 @@ module.exports = (nextConfig = {}) => ({
       const originalEntry = config.entry;
       config.entry = async () => {
         const entries = await originalEntry();
-        const swCompiledPath = join(__dirname, 'register-sw-compiled.js')
+        const swCompiledPath = resolve(__dirname, 'register-sw-compiled.js')
         // See https://github.com/zeit/next.js/blob/canary/examples/with-polyfills/next.config.js for a reference on how to add new entrypoints
         if (
           entries['main.js'] &&
