@@ -1,7 +1,7 @@
 const { GenerateSW, InjectManifest } = require('workbox-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { readFile, writeFile } = require('fs-extra');
-const { join } = require('path');
+const { resolve } = require('path');
 const { cwd } = require('process');
 
 const exportSw = require('./export');
@@ -56,7 +56,7 @@ module.exports = (nextConfig = {}) => ({
     }
 
     const {
-      devSwSrc = join(__dirname, 'service-worker.js'),
+      devSwSrc = resolve(__dirname, 'service-worker.js'),
       dontAutoRegisterSw = false,
       generateInDevMode = false,
       generateSw = true,
@@ -78,7 +78,7 @@ module.exports = (nextConfig = {}) => ({
       config.plugins.push(
         // Workbox uses Webpack's asset manifest to generate the SW's pre-cache manifest, so we need
         // to copy the app's assets into the Webpack context so those are picked up.
-        new CopyWebpackPlugin([{ from: `${join(cwd(), nextAssetDirectory)}/**/*` }]),
+        new CopyWebpackPlugin([{ from: `${resolve(cwd(), nextAssetDirectory)}/**/*` }]),
         generateSw ? new GenerateSW({ ...defaultGenerateOpts, ...workboxOpts }) : new InjectManifest({ ...defaultInjectOpts, ...workboxOpts }),
       );
     }
@@ -88,7 +88,7 @@ module.exports = (nextConfig = {}) => ({
       const originalEntry = config.entry;
       config.entry = async () => {
         const entries = await originalEntry();
-        const swCompiledPath = join(__dirname, 'register-sw-compiled.js');
+        const swCompiledPath = resolve(__dirname, 'register-sw-compiled.js');
         // See https://github.com/zeit/next.js/blob/canary/examples/with-polyfills/next.config.js for a reference on how to add new entrypoints
         if (
           entries['main.js'] &&
